@@ -1,0 +1,36 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+
+# Downloaded media files & temporary fragments
+downloads/
+*.mp4
+*.m4a
+*.webm
+*.mp3
+*.mkv
+*.wav
+*.part
+*.ytdl
+
+# Logs and databases
+*.log
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE and Editor files
+.vscode/
+.idea/
+.gemini/

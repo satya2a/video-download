@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Video Download - Universal Video & Audio Downloader</title>
+    <meta name="description" content="Download videos, reels, stories, shorts, and audio from Instagram, YouTube, Facebook, TikTok, Twitter/X, and 1000+ platforms in highest quality.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- App Favicon & Logo -->
+    <link rel="icon" type="image/png" href="/static/assets/logo.png">
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="background-glow glow-1"></div>
+    <div class="background-glow glow-2"></div>
+    <div class="background-glow glow-3"></div>
+
+    <div class="app-layout">
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <img src="/static/assets/logo.png" alt="URL Video Download" style="width: 100%; height: 100%; border-radius: 50%; object-fit: contain;">
+                </div>
+                <div class="brand-text">
+                    <h1>URL Video <span>Download</span></h1>
+                    <span class="badge-pro">Universal v2.0</span>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <button class="nav-btn" id="openFolderBtn" title="Open Downloads Folder">
+                    <i class="fa-regular fa-folder-open"></i>
+                    <span>Open Folder</span>
+                </button>
+                <button class="nav-btn" id="settingsToggleBtn" title="Settings & Cookies">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-bolt"></i> 1000+ Platforms Supported
+                </div>
+                <h2 class="hero-title">Download Any Video or Audio Instantly</h2>
+                <p class="hero-subtitle">
+                    Paste any link — Instagram Reels, Stories & Posts, YouTube 4K & Shorts, Facebook, TikTok, Twitter/X, Reddit & more.
+                </p>
+
+                <!-- Input Box -->
+                <div class="input-card" id="inputCard">
+                    <div class="platform-indicator" id="platformIndicator" title="Platform detected">
+                        <i class="fa-solid fa-link" id="platformIcon"></i>
+                        <span id="platformName">Auto Detect</span>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <input 
+                            type="url" 
+                            id="videoUrlInput" 
+                            placeholder="Paste video link here... (Instagram, YouTube, Facebook, etc.)"
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <button class="action-mini-btn" id="pasteBtn" title="Paste link from clipboard">
+                            <i class="fa-regular fa-paste"></i>
+                            <span>Paste</span>
+                        </button>
+                        <button class="action-mini-btn hidden" id="clearBtn" title="Clear input">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <div class="input-actions">
+                        <button class="btn-primary" id="fetchInfoBtn">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Fetch Media</span>
+                        </button>
+                        <button class="btn-secondary" id="quickDownloadBtn" title="Fast Download best quality without preview">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Fast Download</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Platform Supported Tags -->
+                <div class="platform-tags">
+                    <span class="ptag instagram"><i class="fa-brands fa-instagram"></i> Instagram (Reel/Story/Post)</span>
+                    <span class="ptag youtube"><i class="fa-brands fa-youtube"></i> YouTube (Video/Shorts/4K)</span>
+                    <span class="ptag facebook"><i class="fa-brands fa-facebook"></i> Facebook (Reels/Watch)</span>
+                    <span class="ptag tiktok"><i class="fa-brands fa-tiktok"></i> TikTok</span>
+                    <span class="ptag twitter"><i class="fa-brands fa-x-twitter"></i> X / Twitter</span>
+                    <span class="ptag reddit"><i class="fa-brands fa-reddit"></i> Reddit</span>
+                    <span class="ptag generic"><i class="fa-solid fa-infinity"></i> 1000+ Sites</span>
+                </div>
+            </section>
+
+            <!-- Loading Spinner State -->
+            <div class="loading-state hidden" id="loadingState">
+                <div class="pulse-loader">
+                    <div class="spinner"></div>
+                </div>
+                <h3 id="loadingText">Fetching video details & stream formats...</h3>
+                <p>Connecting to platform servers and analyzing available resolutions</p>
+            </div>
+
+            <!-- Error Banner -->
+            <div class="error-banner hidden" id="errorBanner">
+                <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="error-content">
+                    <h4 id="errorTitle">Download Failed</h4>
+                    <p id="errorMessage">Something went wrong while processing the URL.</p>
+                    <div class="error-actions" id="errorActions">
+                        <button class="btn-subtle" id="errorCookieBtn">
+                            <i class="fa-solid fa-cookie-bite"></i> Configure Cookies (for Private/Instagram)
+                        </button>
+                    </div>
+                </div>
+                <button class="close-error" id="closeErrorBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Media Preview & Download Config Card -->
+            <section class="preview-card hidden" id="previewCard">
+                <div class="preview-grid">
+                    <!-- Left: Media Thumbnail & Info -->
+                    <div class="preview-media-box">
+                        <div class="thumbnail-wrapper">
+                            <img id="mediaThumbnail" src="" alt="Video thumbnail">
+                            <div class="duration-tag" id="mediaDuration">--:--</div>
+                            <div class="platform-tag" id="previewPlatformTag">
+                                <i class="fa-brands fa-instagram"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Format & Options -->
+                    <div class="preview-details-box">
+                        <h3 class="media-title" id="mediaTitle">Video Title</h3>
+                        <div class="media-meta">
+                            <span class="meta-item"><i class="fa-regular fa-user"></i> <b id="mediaAuthor">Channel</b></span>
+                            <span class="meta-item" id="mediaViewsContainer"><i class="fa-regular fa-eye"></i> <span id="mediaViews">--</span> views</span>
+                            <span class="meta-item"><i class="fa-solid fa-shield-halved"></i> High Quality Merged</span>
+                        </div>
+
+                        <!-- Format Mode Switcher -->
+                        <div class="format-tabs">
+                            <button class="format-tab active" data-type="video" id="tabVideo">
+                                <i class="fa-solid fa-video"></i> Video (MP4)
+                            </button>
+                            <button class="format-tab" data-type="audio" id="tabAudio">
+                                <i class="fa-solid fa-music"></i> Audio Only (MP3 320k)
+                            </button>
+                        </div>
+
+                        <!-- Quality Selection (for Video) -->
+                        <div class="quality-selector-group" id="videoQualityGroup">
+                            <label class="section-label">Select Resolution / Quality:</label>
+                            <div class="quality-chips" id="qualityChips">
+                                <!-- Populated dynamically -->
+                                <button class="quality-chip active" data-quality="best">Best Quality (Auto)</button>
+                                <button class="quality-chip" data-quality="1080p">1080p FHD</button>
+                                <button class="quality-chip" data-quality="720p">720p HD</button>
+                                <button class="quality-chip" data-quality="480p">480p SD</button>
+                            </div>
+                        </div>
+
+                        <!-- Audio Options (hidden by default) -->
+                        <div class="audio-options-group hidden" id="audioQualityGroup">
+                            <div class="audio-info-box">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>High quality 320 kbps MP3 conversion with album art & metadata embed.</span>
+                            </div>
+                        </div>
+
+                        <!-- Download Execution Button -->
+                        <div class="preview-download-action">
+                            <button class="btn-glow-download" id="startDownloadBtn">
+                                <i class="fa-solid fa-cloud-arrow-down"></i>
+                                <span>Download Now</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Download Progress Card -->
+            <section class="progress-card hidden" id="progressCard">
+                <div class="progress-header">
+                    <div class="progress-title-wrapper">
+                        <div class="spinner-small" id="progressSpinner"></div>
+                        <div>
+                            <h4 class="progress-title" id="progressTitle">Downloading Media...</h4>
+                            <p class="progress-status" id="progressStatus">Initializing connection...</p>
+                        </div>
+                    </div>
+                    <div class="progress-percentage" id="progressPercent">0%</div>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+                </div>
+
+                <div class="progress-stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">Speed</span>
+                        <span class="stat-val" id="statSpeed">-- MB/s</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Size</span>
+                        <span class="stat-val" id="statSize">-- / --</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ETA Remaining</span>
+                        <span class="stat-val" id="statEta">--</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Success Card -->
+            <section class="success-card hidden" id="successCard">
+                <div class="success-icon-wrap">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="success-details">
+                    <h3>Download Finished Successfully!</h3>
+                    <p class="file-name" id="successFileName">video_file.mp4</p>
+                    <div class="file-meta-row">
+                        <span id="successFileSize">0 MB</span>
+                        <span>•</span>
+                        <span id="successFileFormat">MP4 Video</span>
+                    </div>
+                    <div class="success-actions">
+                        <button class="btn-action-highlight" id="successOpenFolderBtn">
+                            <i class="fa-regular fa-folder-open"></i> Show in Folder
+                        </button>
+                        <button class="btn-action" id="successPlayBtn">
+                            <i class="fa-solid fa-play"></i> Play Media
+                        </button>
+                        <button class="btn-action" id="successSaveBrowserBtn">
+                            <i class="fa-solid fa-download"></i> Save to Browser
+                        </button>
+                        <button class="btn-action-ghost" id="successDownloadAnotherBtn">
+                            <i class="fa-solid fa-plus"></i> Download Another
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Library / Downloads History -->
+            <section class="library-section">
+                <div class="section-header">
+                    <div class="header-title">
+                        <i class="fa-solid fa-list-check"></i>
+                        <h3>Downloaded Media Library</h3>
+                        <span class="library-count" id="libraryCount">0 Files</span>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn-subtle" id="refreshLibraryBtn" title="Refresh list">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="library-grid" id="libraryGrid">
+                    <!-- Populated dynamically via JS -->
+                    <div class="empty-library" id="emptyLibrary">
+                        <i class="fa-solid fa-film"></i>
+                        <p>No downloads yet. Paste a link above to get started!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-links">
+                <button type="button" class="footer-link-btn" id="footerPrivacyBtn">
+                    <i class="fa-solid fa-shield-halved"></i> Privacy Policy
+                </button>
+                <span class="footer-dot">•</span>
+                <button type="button" class="footer-link-btn" id="footerTermsBtn">
+                    <i class="fa-solid fa-file-contract"></i> Terms of Service
+                </button>
+                <span class="footer-dot">•</span>
+                <button type="button" class="footer-link-btn highlight-link" id="footerSupportBtn">
+                    <i class="fa-solid fa-headset"></i> Support Us / Contact
+                </button>
+            </div>
+            <p class="footer-copy">© 2026 URL Video Download • Universal Media Studio. All downloads processed locally on your machine.</p>
+        </footer>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div class="modal-overlay hidden" id="playerModal">
+        <div class="modal-content player-modal-content">
+            <div class="modal-header">
+                <h4 id="playerModalTitle">Preview Video</h4>
+                <button class="close-modal" id="closePlayerModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="video-container">
+                    <video id="mediaPlayer" controls autoplay></video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Settings Modal -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <i class="fa-solid fa-sliders"></i>
+                    <h4>App Settings & Preferences</h4>
+                </div>
+                <button class="close-modal" id="closeSettingsModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable-modal-body">
+                <!-- Storage Setting -->
+                <div class="setting-item">
+                    <label class="setting-title"><i class="fa-regular fa-folder"></i> Download Destination Folder</label>
+                    <p class="setting-desc">Folder on your computer where downloaded videos and audio are saved.</p>
+                    <div class="input-with-action">
+                        <input type="text" id="settingDownloadDir" placeholder="Path to download folder...">
+                        <button class="btn-subtle" id="openSettingsDirBtn" title="Open in Windows Explorer">
+                            <i class="fa-regular fa-folder-open"></i> Open
+                        </button>
+                        <button class="btn-subtle" id="resetSettingsDirBtn" title="Reset to default folder">
+                            <i class="fa-solid fa-rotate-left"></i> Default
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quality Preference -->
+                <div class="setting-item">
+                    <label class="setting-title"><i class="fa-solid fa-film"></i> Default Download Quality</label>
+                    <p class="setting-desc">Preferred video quality used for 1-click Fast Downloads.</p>
+                    <select id="settingDefaultQualitySelect" class="custom-select">
+                        <option value="best">Best Available (Auto Max Resolution)</option>
+                        <option value="1080p">1080p Full HD (Recommended)</option>
+                        <option value="720p">720p HD</option>
+                        <option value="480p">480p SD</option>
+                        <option value="audio">Audio Only (MP3 320k)</option>
+                    </select>
+                </div>
+
+                <!-- Background Desktop Notifications -->
+                <div class="setting-item">
+                    <div class="setting-toggle-row">
+                        <div>
+                            <label class="setting-title"><i class="fa-regular fa-bell"></i> Desktop Notifications</label>
+                            <p class="setting-desc">Show Windows browser notification when a download finishes in the background.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingNotificationsToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Auto-Paste Toggle -->
+                <div class="setting-item">
+                    <div class="setting-toggle-row">
+                        <div>
+                            <label class="setting-title"><i class="fa-regular fa-paste"></i> Auto-Detect Clipboard Links</label>
+                            <p class="setting-desc">Automatically inspect clipboard when clicking into the input field.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingAutoPasteToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Browser Cookies -->
+                <div class="setting-item">
+                    <label class="setting-title"><i class="fa-solid fa-cookie-bite"></i> Browser Cookies (Instagram / Facebook Login)</label>
+                    <p class="setting-desc">
+                        Allows downloading private Instagram Stories, Reels, or age-restricted YouTube videos by borrowing login session from your browser.
+                    </p>
+                    <select id="settingBrowserCookieSelect" class="custom-select">
+                        <option value="none">Disabled (Anonymous / Public Videos)</option>
+                        <option value="chrome">Google Chrome</option>
+                        <option value="edge">Microsoft Edge</option>
+                        <option value="firefox">Mozilla Firefox</option>
+                        <option value="brave">Brave Browser</option>
+                    </select>
+                </div>
+
+                <!-- Contact & Background Info -->
+                <div class="tips-box">
+                    <h5><i class="fa-solid fa-circle-info"></i> Background Mode & Tips</h5>
+                    <ul>
+                        <li><strong>Silent Background Running:</strong> To run URL Video Download without any console window, use <code>start_background.vbs</code> or option [2] in <code>start_app.bat</code>.</li>
+                        <li><strong>Instagram Stories:</strong> Select Chrome or Edge where you are logged in to download private stories.</li>
+                        <li><strong>Need Help?</strong> Use the "Support Us / Contact" link in the footer to send questions or suggestions directly.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelSettingsBtn">Cancel</button>
+                <button class="btn-primary" id="saveSettingsBtn">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support & Contact Us Modal -->
+    <div class="modal-overlay hidden" id="supportModal">
+        <div class="modal-content support-modal-content">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <i class="fa-solid fa-headset"></i>
+                    <h4>Support & Contact Developer</h4>
+                </div>
+                <button class="close-modal" id="closeSupportModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable-modal-body">
+                <p class="modal-intro-text">
+                    Having trouble downloading a video or experiencing an issue with the website? Reach out below and we will be glad to assist you!
+                </p>
+
+                <form id="supportForm" class="support-form">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label" for="supportName">Your Full Name *</label>
+                            <input type="text" id="supportName" class="form-input" placeholder="e.g. John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="supportEmail">Email Address *</label>
+                            <input type="email" id="supportEmail" class="form-input" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label class="form-label" for="supportCategory">Problem Category *</label>
+                            <select id="supportCategory" class="form-select">
+                                <option value="download_issue">Video Download Failed / Error</option>
+                                <option value="instagram_reel_story">Instagram Reel / Story Issue</option>
+                                <option value="youtube_facebook">YouTube / Facebook Video Issue</option>
+                                <option value="website_bug">Website Bug / Malfunction</option>
+                                <option value="feature_request">Feature Request / Suggestion</option>
+                                <option value="other">General Query</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="supportPlatform">Platform</label>
+                            <select id="supportPlatform" class="form-select">
+                                <option value="instagram">Instagram</option>
+                                <option value="youtube">YouTube</option>
+                                <option value="facebook">Facebook</option>
+                                <option value="tiktok">TikTok</option>
+                                <option value="twitter">X / Twitter</option>
+                                <option value="reddit">Reddit</option>
+                                <option value="other">Other Platform</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="supportUrl">Video Link (If applicable)</label>
+                        <input type="url" id="supportUrl" class="form-input" placeholder="https://www.instagram.com/reel/... or any video URL">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="supportMessage">Describe Your Issue in Detail *</label>
+                        <textarea id="supportMessage" class="form-textarea" rows="4" placeholder="Please describe what problem you are facing so we can resolve it quickly..." required></textarea>
+                    </div>
+
+                    <div class="direct-contact-card">
+                        <div class="direct-contact-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <strong>Direct Gmail Support:</strong>
+                                <a href="mailto:satyabit7379@gmail.com" id="supportContactEmail" style="color: #93c5fd; text-decoration: underline; font-weight: 600;">satyabit7379@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="direct-contact-item">
+                            <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                            <div>
+                                <strong>Instant Gmail Compose:</strong>
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=satyabit7379@gmail.com&su=Support%20Query%20-%20URL%20Video%20Download" target="_blank" class="btn-subtle" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; margin-top: 4px; color: #fff; background: rgba(234, 67, 53, 0.2); border-color: rgba(234, 67, 53, 0.4);">
+                                    <i class="fa-brands fa-google"></i> Click to Open in Gmail
+                                </a>
+                            </div>
+                        </div>
+                        <div class="direct-contact-item">
+                            <i class="fa-solid fa-bolt"></i>
+                            <div>
+                                <strong>Response Guarantee:</strong>
+                                <span>Messages are delivered directly to our inbox for a prompt response.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="submitSupportBtn">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Ticket & Send to satyabit7379@gmail.com
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal-overlay hidden" id="privacyModal">
+        <div class="modal-content policy-modal-content">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h4>Privacy Policy</h4>
+                </div>
+                <button class="close-modal" id="closePrivacyModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable-modal-body policy-text">
+                <h3>1. Privacy First Architecture</h3>
+                <p>
+                    URL Video Download is engineered with a strict local-first design. We do not track, collect, or store your personal browsing data or downloaded files on external cloud servers.
+                </p>
+
+                <h3>2. Local Storage & Downloads</h3>
+                <p>
+                    When you paste a media link, video and audio streams are retrieved directly from the platform's content delivery network (CDN) and written directly to your computer's local <code>downloads/</code> folder. No downloaded content is stored on external intermediary proxy servers.
+                </p>
+
+                <h3>3. Local Browser Cookies Security</h3>
+                <p>
+                    If you enable Browser Cookies (Chrome, Edge, or Firefox) in Settings to download private Instagram stories or reels, those cookies remain strictly on your local computer for yt-dlp authentication and are never transmitted to third parties.
+                </p>
+
+                <h3>4. Support Queries</h3>
+                <p>
+                    When you submit a support request, your name, email address, and issue description are used solely to assist you and provide customer service.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="closePrivacyBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal-overlay hidden" id="termsModal">
+        <div class="modal-content policy-modal-content">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <i class="fa-solid fa-file-contract"></i>
+                    <h4>Terms of Service</h4>
+                </div>
+                <button class="close-modal" id="closeTermsModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable-modal-body policy-text">
+                <h3>1. Acceptance of Terms</h3>
+                <p>
+                    By using URL Video Download, you agree to these terms. This application is provided for personal, fair use, and educational archiving purposes.
+                </p>
+
+                <h3>2. Copyright & Intellectual Property</h3>
+                <p>
+                    Users must respect the intellectual property rights of content creators and copyright holders. URL Video Download is intended for personal offline backups and study of media that you have the right or explicit permission to download.
+                </p>
+
+                <h3>3. Third-Party Platform Terms</h3>
+                <p>
+                    URL Video Download is an independent utility and is not affiliated with, endorsed by, or sponsored by Instagram, Meta, YouTube, TikTok, X (Twitter), or any third-party service. Users are responsible for adhering to all applicable platform terms.
+                </p>
+
+                <h3>4. Limitation of Liability</h3>
+                <p>
+                    This software is provided on an "AS IS" basis without warranties of any kind. Developers assume no liability for platform updates, service interruptions, or rate-limiting enforced by third-party hosting platforms.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="closeTermsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
