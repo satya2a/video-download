@@ -347,6 +347,29 @@ async def get_support_tickets():
     return {"count": 0, "tickets": []}
 
 
+def get_local_ip():
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
+@app.get("/api/network-info")
+async def get_network_info():
+    ip = get_local_ip()
+    port = 8000
+    mobile_url = f"http://{ip}:{port}"
+    return {
+        "local_ip": ip,
+        "port": port,
+        "mobile_url": mobile_url,
+        "qr_url": f"https://api.qrserver.com/v1/create-qr-code/?size=250x250&data={mobile_url}"
+    }
+
 # Mount static assets
 static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(static_dir, exist_ok=True)
@@ -366,9 +389,12 @@ if __name__ == "__main__":
     import webbrowser
 
     port = 8000
+    local_ip = get_local_ip()
     print(f"==================================================")
-    print(f"  URL Video Download Server Starting on http://localhost:{port}")
-    print(f"  Downloaded videos will be saved in: {downloader.DOWNLOAD_DIR}")
+    print(f"  URL Video Download Server Running!")
+    print(f"  Laptop / Desktop:  http://localhost:{port}")
+    print(f"  Mobile Phone (Wi-Fi): http://{local_ip}:{port}")
+    print(f"  Downloaded videos: {downloader.DOWNLOAD_DIR}")
     print(f"==================================================")
 
     # Open browser automatically after a short delay
@@ -378,4 +404,4 @@ if __name__ == "__main__":
         webbrowser.open(f"http://localhost:{port}")
 
     threading.Thread(target=open_browser, daemon=True).start()
-    uvicorn.run("app:app", host="127.0.0.1", port=port, reload=False)
+    uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)

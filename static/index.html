@@ -34,13 +34,17 @@
             </div>
 
             <div class="nav-actions">
+                <button class="nav-btn btn-mobile-nav" id="mobileConnectBtn" title="Connect Phone / QR Code">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <span class="nav-btn-text">Mobile Connect</span>
+                </button>
                 <button class="nav-btn" id="openFolderBtn" title="Open Downloads Folder">
                     <i class="fa-regular fa-folder-open"></i>
-                    <span>Open Folder</span>
+                    <span class="nav-btn-text">Open Folder</span>
                 </button>
                 <button class="nav-btn" id="settingsToggleBtn" title="Settings & Cookies">
                     <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
+                    <span class="nav-btn-text">Settings</span>
                 </button>
             </div>
         </header>
@@ -240,14 +244,14 @@
                         <span id="successFileFormat">MP4 Video</span>
                     </div>
                     <div class="success-actions">
-                        <button class="btn-action-highlight" id="successOpenFolderBtn">
-                            <i class="fa-regular fa-folder-open"></i> Show in Folder
+                        <button class="btn-action-highlight" id="successSaveBrowserBtn">
+                            <i class="fa-solid fa-download"></i> <span id="saveBtnLabel">Save to Device / Phone</span>
                         </button>
                         <button class="btn-action" id="successPlayBtn">
                             <i class="fa-solid fa-play"></i> Play Media
                         </button>
-                        <button class="btn-action" id="successSaveBrowserBtn">
-                            <i class="fa-solid fa-download"></i> Save to Browser
+                        <button class="btn-action desktop-only-btn" id="successOpenFolderBtn">
+                            <i class="fa-regular fa-folder-open"></i> Show in Folder
                         </button>
                         <button class="btn-action-ghost" id="successDownloadAnotherBtn">
                             <i class="fa-solid fa-plus"></i> Download Another
@@ -583,6 +587,50 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-primary" id="closeTermsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Connect Modal -->
+    <div class="modal-overlay hidden" id="mobileModal">
+        <div class="modal-content mobile-modal-content">
+            <div class="modal-header">
+                <div class="modal-title-with-icon">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <h4>Connect from Mobile / Phone</h4>
+                </div>
+                <button class="close-modal" id="closeMobileModalBtn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body scrollable-modal-body" style="text-align: center;">
+                <p class="modal-intro-text" style="margin-bottom: 16px;">
+                    Apne phone par chalane ke liye: phone aur laptop ko <b>same Wi-Fi</b> se connect karein aur neeche diya <b>QR Code</b> scan karein:
+                </p>
+                
+                <div class="qr-card-container">
+                    <div class="qr-code-box">
+                        <img id="mobileQrImg" src="" alt="Mobile QR Code" class="qr-image">
+                    </div>
+                    <span class="qr-subtext"><i class="fa-solid fa-camera"></i> Scan with Phone Camera or Google Lens</span>
+                </div>
+
+                <div class="mobile-url-box">
+                    <span class="mobile-url-label">Ya phone ke browser me direct yeh URL kholein:</span>
+                    <div class="mobile-url-copy-row">
+                        <input type="text" id="mobileUrlDisplay" readonly value="http://localhost:8000">
+                        <button class="btn-secondary" id="copyMobileUrlBtn" title="Copy Mobile Link">
+                            <i class="fa-regular fa-copy"></i> <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-features-tip">
+                    <div class="tip-item"><i class="fa-solid fa-check"></i> Mobile screen par 100% responsive sleek UI</div>
+                    <div class="tip-item"><i class="fa-solid fa-check"></i> Direct phone gallery / storage me video save karein</div>
+                    <div class="tip-item"><i class="fa-solid fa-check"></i> Instagram Reels, YouTube Shorts, sabhi 1-tap me download</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeMobileBtn">Close</button>
             </div>
         </div>
     </div>

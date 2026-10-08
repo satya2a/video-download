@@ -101,6 +101,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toastContainer = document.getElementById('toastContainer');
 
+    // Mobile Elements & Detection
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    if (isMobileDevice) {
+        document.body.classList.add('is-mobile');
+        const saveLabel = document.getElementById('saveBtnLabel');
+        if (saveLabel) saveLabel.textContent = "Save to Phone Storage";
+    }
+
+    const mobileModal = document.getElementById('mobileModal');
+    const mobileConnectBtn = document.getElementById('mobileConnectBtn');
+    const closeMobileModalBtn = document.getElementById('closeMobileModalBtn');
+    const closeMobileBtn = document.getElementById('closeMobileBtn');
+    const mobileQrImg = document.getElementById('mobileQrImg');
+    const mobileUrlDisplay = document.getElementById('mobileUrlDisplay');
+    const copyMobileUrlBtn = document.getElementById('copyMobileUrlBtn');
+
     // App State
     let currentMediaInfo = null;
     let selectedFormatType = "video";
@@ -240,7 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             videoUrlInput.focus();
-            showToast("Please press Ctrl+V to paste URL", "info");
+            if (isMobileDevice) {
+                showToast("Please tap and hold input box to Paste link", "info");
+            } else {
+                showToast("Please press Ctrl+V to paste URL", "info");
+            }
         }
     });
 
@@ -692,7 +712,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ filename })
             });
-            showToast("Opened Downloads folder in Explorer", "info");
+            if (isMobileDevice) {
+                showToast("Opened on computer. On phone, use 'Save to Phone' button.", "info");
+            } else {
+                showToast("Opened Downloads folder in Explorer", "info");
+            }
         } catch (e) {
             showToast("Failed to open folder", "error");
         }
@@ -930,6 +954,44 @@ document.addEventListener('DOMContentLoaded', () => {
     termsModal.addEventListener('click', (e) => {
         if (e.target === termsModal) termsModal.classList.add('hidden');
     });
+
+    // Mobile Connect Modal
+    async function openMobileConnectModal() {
+        try {
+            const res = await fetch('/api/network-info');
+            const data = await res.json();
+            if (data.mobile_url) {
+                mobileUrlDisplay.value = data.mobile_url;
+                mobileQrImg.src = data.qr_url;
+            }
+        } catch (e) {
+            console.warn("Could not fetch network info:", e);
+            mobileUrlDisplay.value = window.location.origin;
+            mobileQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`;
+        }
+        mobileModal.classList.remove('hidden');
+    }
+
+    if (mobileConnectBtn) mobileConnectBtn.addEventListener('click', openMobileConnectModal);
+    if (closeMobileModalBtn) closeMobileModalBtn.addEventListener('click', () => mobileModal.classList.add('hidden'));
+    if (closeMobileBtn) closeMobileBtn.addEventListener('click', () => mobileModal.classList.add('hidden'));
+    if (mobileModal) {
+        mobileModal.addEventListener('click', (e) => {
+            if (e.target === mobileModal) mobileModal.classList.add('hidden');
+        });
+    }
+
+    if (copyMobileUrlBtn) {
+        copyMobileUrlBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(mobileUrlDisplay.value);
+                showToast("Mobile link copied to clipboard! 📋", "success");
+            } catch (err) {
+                mobileUrlDisplay.select();
+                showToast("Please copy the link manually", "info");
+            }
+        });
+    }
 
     // Initial Load: Fetch Settings & Library
     async function initApp() {
