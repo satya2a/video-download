@@ -1,0 +1,24 @@
+[
+  {
+    "id": "TICK-1791488873-150928",
+    "timestamp": "2026-10-09 01:17:53",
+    "name": "saty",
+    "email": "satyprakshsatyabhai055542@gmail.com",
+    "category": "download_issue",
+    "platform": "instagram",
+    "video_url": "https://youtube.com/shorts/9e3bveSqWmg?si=w2lOgBXkNtVQTqcv",
+    "message": "wewew",
+    "status": "received"
+  },
+  {
+    "id": "TICK-1791487793-2D9590",
+    "timestamp": "2026-10-09 00:59:53",
+    "name": "Test User",
+    "email": "test@example.com",
+    "category": "download_issue",
+    "platform": "instagram",
+    "video_url": "https://instagram.com/reel/123",
+    "message": "Test query: Reel not downloading",
+    "status": "received"
+  }
+]
